@@ -1,24 +1,22 @@
-# import http.client
-# import urllib3
-# import requests
-#
-# url = 'https://www.google.com'
-# # response = requests.get(url)
-# # if response.status_code == 200:
-# #     print(response.content)
-# # else:
-# #     print(f"Obtained a different output {response.status_code}")
-#
-# h1 = urllib3.PoolManager()
-#
-# request = h1.request('GET', url)
-# if request.status
+import logging
+import socket
+import sys
+import requests
 
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+url = "http://www.example.com"
 
-import urllib3
+connectionMode = url[:url.rfind(':')].strip()
+print(f"The connection type is:{connectionMode}")
+host = url[url.rfind('/') + 1:].strip()
+print(f"The host header is: {host}")
 
-url = 'https://www.google.com'
-https = urllib3.PoolManager()
-request = https.request('GET', url)
-if request.status == 200:
-    print(request.data)
+actualResponse = requests.get(url, allow_redirects=False)
+print(f"The actual response is: \n \n {actualResponse.content}")
+sock.connect((host, 80))
+getRequest = "GET / HTTPS/1.1\r\nHost:%s\r\n\r\n" % host
+sock.send(getRequest.encode())
+response = sock.recv(4096)
+http_response = repr(response)
+sock.close()
+print(f"The full response is: \n \n {http_response}")
